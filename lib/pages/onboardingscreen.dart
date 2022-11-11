@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pageviewonboarding/widgets/customtextbutton.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:pageviewonboarding/widgets/onboardcontent.dart';
+import 'package:pageviewonboarding/widgets/customtextbutton.dart';
 import 'package:pageviewonboarding/widgets/customtextstyle.dart';
+
+const double mockupWidth = 412.0;
+const double mockupHeight = 732.0;
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -24,6 +27,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    final double widthScale = screenWidth / mockupWidth;
+    final double heightScale = screenHeight / mockupHeight;
+
     return Scaffold(
       backgroundColor: Color(0XFFEBDAF5),
       body: PageView(
@@ -32,9 +42,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           setState(() {
             pageIndex = index;
           });
-          print("Index is $pageIndex");
         },
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         children: const [
           OnboardContent(
               image: "assets/images/placeholder1.png",
@@ -59,48 +68,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ],
       ),
       bottomSheet: Container(
-        height: 70.0,
-        decoration: BoxDecoration(
+        height: 70.0 * heightScale,
+        decoration: const BoxDecoration(
           color: Color(0XFFEBDAF5)
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            pageIndex == 0
-                ?
-            SizedBox(width: 67.0)
-                :
-            CustomTextButton(
-                displayText: "Back",
-                onPressed: () => controller.previousPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut)
-            ),
-            Center(
-              child: SmoothPageIndicator(
-                controller: controller,
-                count: 4,
-                effect: const JumpingDotEffect(
-                  activeDotColor: Color(0xFF750EEB),
-                  dotColor: Colors.white,
-                  dotWidth: 18.0,
-                  dotHeight: 18.0,
-                  jumpScale: 1.2
-                ),
+            SizedBox(
+              width: 110.0 * widthScale,
+              child: pageIndex == 0
+                  ?
+              SizedBox()
+                  :
+              CustomTextButton(
+                  displayText: "Back",
+                  onPressed: () => controller.previousPage(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut)
               ),
             ),
-            pageIndex == 3
-                ?
-            CustomTextButton(
-              displayText: "Let's go!",
-              onPressed: () => null
-            )
-                :
-            CustomTextButton(
-              displayText: "Next",
-              onPressed: () => controller.nextPage(
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut)
+            SmoothPageIndicator(
+              controller: controller,
+              count: 4,
+              effect: JumpingDotEffect(
+                activeDotColor: Color(0xFF750EEB),
+                dotColor: Colors.white,
+                dotWidth: 16.0 * widthScale,
+                dotHeight: 16.0 * widthScale,
+                jumpScale: 1.0,
+                spacing: 6.0 * widthScale
+              ),
+            ),
+            SizedBox(
+              width: 110.0 * widthScale,
+              child: pageIndex == 3
+                  ?
+              CustomTextButton(
+                displayText: "Let's go!",
+                onPressed: () => null
+              )
+                  :
+              CustomTextButton(
+                displayText: "Next",
+                onPressed: () => controller.nextPage(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut)
+              ),
             ),
           ],
         ),
